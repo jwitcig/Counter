@@ -1,0 +1,5 @@
+<h1>Project#list</h1>
+
+<% @swift_file_paths.each do |path| %>
+  <%= link_to(path, :controller => 'project', :action => 'stats', :file_paths => [path]) %><br>
+<% end %>

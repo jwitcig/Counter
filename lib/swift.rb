@@ -1,8 +1,8 @@
 require_relative 'project'
 
 module Swift
-  def parse_file(path)
-    return ProjectFile.new(raw_lines=File.read(path).split("\n"))
+  def parse_file(path, project)
+    return ProjectFile.new(raw_lines=File.read(path).split("\n"), path, project)
   end
 
   module Publicity
@@ -87,8 +87,8 @@ module Swift
   end
 
   class ProjectFile < Project::CodeFile
-    def initialize(raw_lines)
-      super(raw_lines)
+    def initialize(raw_lines, path, project)
+      super(raw_lines, path, project)
       @CodeLineType = Swift::CodeLineType
     end
   end

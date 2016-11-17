@@ -1,21 +1,24 @@
 module Project
   class Project
-    attr_accessor :name
+    attr_accessor :name, :url
 
-    def initialize(name)
-      @name = name
+    def initialize(username, project_name)
+      @name = project_name
+      @url = "https://github.com/#{username}/#{project_name}"
     end
   end
 
   class CodeFile
-    attr_accessor :raw_lines
-    attr_accessor :lines
-    attr_accessor :blocks
+    attr_accessor :raw_lines, :path, :lines, :blocks, :name, :source_path
 
-    def initialize(raw_lines)
+    def initialize(raw_lines, path, project)
       @raw_lines = raw_lines
+      @path = path
       @blocks = find_brace_pairs
       @lines = generate_line_items
+      @name = path.sub(path[/.*\//], '')
+      @source_path = path.sub(path[/.*(#{project.name})\//], '')
+      @project = project
     end
 
     def line_range

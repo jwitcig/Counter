@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'project/:username/:project_name/list', to: 'project#list'
+  get 'project/:username/:project_name/stats', to: 'project#stats'
+
   get 'welcome/index'
 
   root 'welcome#index'
