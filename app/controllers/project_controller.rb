@@ -18,19 +18,20 @@ class ProjectController < ApplicationController
 
   def stats
     @username = params[:username]
-    project = Project::Project.new(username=params[:username], project_name=params[:project_name])
+    project = Project::Project.new(username=params[:username],
+                               project_name=params[:project_name])
     @project_name = project.name
-    # @file_paths = params[:file_paths]
 
-    file_paths = Dir.glob("#{GIT_REPO_DIR}/#{@project_name}/**/*.swift")
+    Git.clone_if_needed(project, GIT_REPO_DIR)
+
+    file_paths = Dir.glob("#{GIT_REPO_DIR}/#{@project_name}/**/*.swift").sort_by(&:downcase)
 
     if file_paths.kind_of?(String)
       file_paths = [@file_paths]
     end
 
-    swift_files = file_paths.map do |path|
-      Swift::parse_file(path, project)
-    end
+    swift_files = file_paths.map { |path| Swift::parse_file(path, project) }
+                            .select { |file| !file.nil? }
 
     @number_of_swift_files = swift_files.count
 
@@ -43,6 +44,8 @@ class ProjectController < ApplicationController
             'class': stats.class_count,
          'protocol': stats.protocol_count,
         'extension': stats.extension_count,
+           'struct': stats.struct_count,
+             'enum': stats.enum_count,
 
               'let': stats.let_count,
               'var': stats.var_count,
@@ -62,6 +65,13 @@ class ProjectController < ApplicationController
       end
       compound_stats
     }
+
+    @combined_stats = @individual_files_stats.keys.inject({}) { |combined, file|
+      @individual_files_stats[file].each do |key, count|
+        combined[key] = combined[key].nil? ? count : combined[key] += count
+      end
+      combined
+     }
 
     render template: 'project/files'
   end

@@ -2,7 +2,11 @@ require_relative 'project'
 
 module Swift
   def parse_file(path, project)
-    return ProjectFile.new(raw_lines=File.read(path).split("\n"), path, project)
+    file = File.read(path)
+    if file.valid_encoding?
+      return ProjectFile.new(raw_lines=file.split("\n"), path, project)
+    end
+    return nil
   end
 
   module Publicity
@@ -29,6 +33,9 @@ module Swift
     CLASS = 'class'
     PROTOCOL = 'protocol'
     EXTENSION = 'extension'
+    STRUCT = 'struct'
+    ENUM = 'enum'
+
 
     LET = 'let'
     VAR = 'var'
@@ -55,6 +62,7 @@ module Swift
 
   class Stats
     attr_accessor :import_count, :class_count, :protocol_count, :extension_count,
+                  :struct_count, :enum_count,
                   :let_count, :var_count, :func_count, :ibaction_count, :iboutlet_count,
                   :public_count, :private_count, :internal_count, :open_count
 
@@ -66,6 +74,8 @@ module Swift
       @class_count = @file.lines_of_types([Swift::CodeLineType::CLASS]).count
       @protocol_count = @file.lines_of_types([Swift::CodeLineType::PROTOCOL]).count
       @extension_count = @file.lines_of_types([Swift::CodeLineType::EXTENSION]).count
+      @struct_count = @file.lines_of_types([Swift::CodeLineType::STRUCT]).count
+      @enum_count = @file.lines_of_types([Swift::CodeLineType::ENUM]).count
 
       @let_count = @file.lines_of_types([Swift::CodeLineType::LET]).count
       @var_count = @file.lines_of_types([Swift::CodeLineType::VAR]).count

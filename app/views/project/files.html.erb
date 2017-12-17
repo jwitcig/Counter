@@ -22,9 +22,39 @@
     <% end %>
   </div>
 
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-default">
+
+        <div class="panel-heading">
+          <h4>Total</h4>
+        </div>
+
+        <div class="panel-body">
+          <table style="width:50%">
+            <tr>
+              <th>declaration</th>
+              <th>count</th>
+            </tr>
+            <% @combined_stats.each do |keyword, count| %>
+              <tr>
+                <td><%= keyword %></td>
+                <td><%= count %></td>
+              </tr>
+            <% end %>
+          </table>
+
+        </div>
+        <div class="panel-footer">
+
+        </div>
+      </div>
+    </div>  </div>
+
   <div class="row">
     <% @individual_files_stats.each do |file, stats_dict| %>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="panel panel-default">
 
           <div class="panel-heading">
